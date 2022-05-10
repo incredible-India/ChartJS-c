@@ -51,7 +51,10 @@ void Menu(char *data,int xPos,int yPos,int color)
 void showMenu()
 {
 	char choice;
+	
 	SetConsoleTitle("ChartJs");
+	
+	system("cls");
 	
 	Menu("1 : Create Chart",20,6,3);
 	Menu("2 : See Old Chart",20,8,6);
