@@ -30,6 +30,7 @@ void gotoxy(int,int);
 void Menu(char*,int,int,int);
 void setcolor(int);
 void showMenu();
+
 //label name cant be blank ka code likhna hai
 //main function 
 int main()

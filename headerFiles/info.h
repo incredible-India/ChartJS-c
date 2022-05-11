@@ -1,6 +1,11 @@
-//creating Node 
+
+
+char showGraphOption();
 struct node* insertDataInNode(struct node*);
 void showConfirmationPage(struct node*);
+void SaveAndAhowGraph(struct node*,char);
+
+//creating Node 
 struct node
 {
     char *label;
@@ -123,10 +128,16 @@ struct node* insertDataInNode(struct node* d1)
 //showing the entered data
 void showConfirmationPage(struct node* ptr)
 {
+	struct node *userinfo; //we will pass for file handling coz ptr become null after using while loop for the displaying the user data
+	userinfo = ptr;
 	char user_choice;
+	char graphType;
 	system("cls");
 	while(ptr!=NULL)
 	{
+		if(strlen(ptr->label) == 0 ) 
+		printf("\nLabel : No Data Given   Value: %f\n",ptr->label,ptr->value);
+		else
 		printf("\nLabel : %s   Value: %f\n",ptr->label,ptr->value);
 		ptr = ptr->next;
 	}
@@ -137,6 +148,11 @@ void showConfirmationPage(struct node* ptr)
 		
 		if(	user_choice == ENTER)
 		{
+			//show the graph option
+		 graphType = showGraphOption();
+			//In FileHanling.h
+			
+			SaveAndAhowGraph(userinfo,graphType)	;
 			
 		}else if(user_choice == BKSP)
 		{
@@ -152,3 +168,55 @@ void showConfirmationPage(struct node* ptr)
 }
 
 
+
+char showGraphOption()
+{
+	
+	char choice;
+	system("cls");
+	Menu("1 : Line Graph",20,5,1);
+	Menu("2 : Bar Graph",20,7,2);
+	Menu("3 : Pie Graph",20,9,3);
+	Menu("4 : Doughnut Graph",20,11,4);
+	Menu("5 : Polar Area Graph",20,13,5);
+	
+	enterAgain:
+	choice =  getch();
+	
+	if(choice == '1' || choice == '2' || choice == '3' || choice == '4' || choice == '5' )
+		return choice;
+		else 
+		goto enterAgain;
+		
+}	
+
+
+//for saving the data and showing the graph in html file
+ void SaveAndAhowGraph(struct node *ptr,char graphType)
+ {
+ 	struct node *userinfo;
+ 	
+ 	userinfo =  ptr; //copying the useinfo in other node 
+ 	
+ 	FILE *OpenHTMLFile,*SaveFile;
+ 	
+ 	//first saving data in txt file
+ 	SaveFile = fopen("./TXT/MyChart.text","a");
+ 
+ 	fprintf(SaveFile,__DATE__);
+ 	
+ 	while(ptr != NULL)
+ 	{
+ 		
+ 		fprintf(SaveFile,"\nLABEL : %s  VALUE : %f \n",ptr->label,ptr->value);
+ 		ptr = ptr->next;
+	 }
+ 	fprintf(SaveFile,"\n-----------------\n");
+ 	
+ 	fclose(SaveFile);
+ 	/*Saved in txt File now we will save in html file */
+ 	
+ 	
+ 	
+ 	
+	 }	
