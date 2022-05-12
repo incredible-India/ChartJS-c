@@ -196,12 +196,15 @@ char showGraphOption()
  {
  	struct node *userinfo;
  	
+ 	char datareading;
+ 	
  	userinfo =  ptr; //copying the useinfo in other node 
  	
- 	FILE *OpenHTMLFile,*SaveFile;
+ 	FILE *OpenHTMLFile,*SaveFile,*WriteInHtml,*secondTxtFile;
  	
  	//first saving data in txt file
  	SaveFile = fopen("./TXT/MyChart.text","a");
+ 	
  
  	fprintf(SaveFile,__DATE__);
  	
@@ -215,6 +218,72 @@ char showGraphOption()
  	
  	fclose(SaveFile);
  	/*Saved in txt File now we will save in html file */
+ 	
+ 	//write the html code ..
+ 	
+ 	OpenHTMLFile = fopen("./HTMLTOPUT/first.txt","r");
+ 	secondTxtFile = fopen("./HTMLTOPUT/second.txt","r");
+ 	
+ 	if(OpenHTMLFile == NULL)
+ 	{
+ 		system("cls");
+ 		gotoxy(40,12);
+ 		printf("File Html has not been found 404...");
+ 		
+ 		exitFn();
+ 		
+	 }else
+	 {
+	 	WriteInHtml = fopen("./OUTPUT/index.html","w");
+	 	
+	 	//writing in html file
+	  while(!feof(OpenHTMLFile))
+    {
+
+       datareading = fgetc(OpenHTMLFile);
+
+        fputc(datareading,WriteInHtml);
+
+    }
+	 	//creating table
+	 	while(userinfo != NULL)
+	 	{
+	 		fprintf(WriteInHtml,"\n<tr> <td> %s </td>\n ",userinfo->label);
+	 		fprintf(WriteInHtml," <td> %f </td> </tr>\n ",userinfo->value);
+	 		
+	 		userinfo = userinfo->next;
+	 		
+		 }
+	 	
+	 	//now for the second segment
+	if(secondTxtFile == NULL)
+ 	{
+ 		system("cls");
+ 		gotoxy(40,12);
+ 		printf("File Html has not been found 404...");
+ 		
+ 		exitFn();
+ 		
+	 }
+	 
+	 
+	  while(!feof(secondTxtFile))
+    {
+
+       datareading = fgetc(secondTxtFile);
+
+        fputc(datareading,WriteInHtml);
+
+    }
+    
+    
+	 
+	 	fclose(OpenHTMLFile);
+	 	fclose(secondTxtFile);
+	 	fclose(WriteInHtml);
+	 	
+	 	
+	 }
  	
  	
  	
