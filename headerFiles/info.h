@@ -152,7 +152,10 @@ void showConfirmationPage(struct node* ptr)
 		 graphType = showGraphOption();
 			//In FileHanling.h
 			
-			SaveAndAhowGraph(userinfo,graphType)	;
+			SaveAndAhowGraph(userinfo,graphType);
+			
+			//when html page is ready it will open this..
+			system("start OUTPUT/index.html");
 			
 		}else if(user_choice == BKSP)
 		{
@@ -194,13 +197,17 @@ char showGraphOption()
 //for saving the data and showing the graph in html file
  void SaveAndAhowGraph(struct node *ptr,char graphType)
  {
- 	struct node *userinfo;
  	
+ 	struct node *userinfo,*one,*two;
+ 	
+ 	char *graph_type;
  	char datareading;
  	
  	userinfo =  ptr; //copying the useinfo in other node 
+ 	one =  ptr; //copying the useinfo in other node 
+ 	two =  ptr; //copying the useinfo in other node 
  	
- 	FILE *OpenHTMLFile,*SaveFile,*WriteInHtml,*secondTxtFile;
+ 	FILE *OpenHTMLFile,*SaveFile,*WriteInHtml,*fourth;
  	
  	//first saving data in txt file
  	SaveFile = fopen("./TXT/MyChart.text","a");
@@ -222,14 +229,14 @@ char showGraphOption()
  	//write the html code ..
  	
  	OpenHTMLFile = fopen("./HTMLTOPUT/first.txt","r");
- 	secondTxtFile = fopen("./HTMLTOPUT/second.txt","r");
+
  	
  	if(OpenHTMLFile == NULL)
  	{
  		system("cls");
  		gotoxy(40,12);
  		printf("File Html has not been found 404...");
- 		
+ 		exit(0);
  		exitFn();
  		
 	 }else
@@ -247,39 +254,86 @@ char showGraphOption()
     }
 	 	//creating table
 	 	while(userinfo != NULL)
-	 	{
-	 		fprintf(WriteInHtml,"\n<tr> <td> %s </td>\n ",userinfo->label);
+	 	{	
+	 		if(strlen(userinfo->label) == 0)
+	 		{
+	 			fprintf(WriteInHtml,"\n<tr> <td> No Data Given </td>\n ");
+			 }
+			 else{
+			 		fprintf(WriteInHtml,"\n<tr> <td> %s </td>\n ",userinfo->label);
+			 }
+	 	
 	 		fprintf(WriteInHtml," <td> %f </td> </tr>\n ",userinfo->value);
 	 		
 	 		userinfo = userinfo->next;
 	 		
 		 }
 	 	
-	 	//now for the second segment
-	if(secondTxtFile == NULL)
- 	{
- 		system("cls");
- 		gotoxy(40,12);
- 		printf("File Html has not been found 404...");
- 		
- 		exitFn();
- 		
-	 }
+		//graph type
+		if(graphType == '1')
+		{
+			graph_type = "line";
+		}else if(graphType == '2')
+		{
+			graph_type = "bar";
+		}else if(graphType == '3')
+		{
+			graph_type = "pie";
+		}else if(graphType == '4')
+		{
+			graph_type = "doughnut";
+		}else if(graphType == '5')
+		{
+			graph_type = "polarArea";
+		}else
+		{
+			graph_type = "bar";
+		}
+	
+	 	fprintf(WriteInHtml,"</tbody>\n</table>\n</div>\n</body>\n<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\n <script>  const ctx = document.getElementById(\'myChart\').getContext(\'2d\');\n  const myChart = new Chart(ctx, {\n type: \'%s\',\ndata: {labels: [",graph_type);
 	 
+	 	while(one !=NULL)
+	 	{
+	 		
+	 		if(strlen(one->label) == 0)
+	 		{
+	 				fprintf(WriteInHtml,"\'No Data Given\',");
+			 }else
+			 {
+			 		fprintf(WriteInHtml,"\'%s\',",one->label);
+			 }
+	 	
+	 		one = one->next;
+		 }
+		 fprintf(WriteInHtml,"],\ndatasets: [{label: \'Your Data\',\ndata: [");
+		 
+		 while(two != NULL)
+		 {
+		 	fprintf(WriteInHtml,"%f,",two->value);
+		 	
+		 	two = two->next;
+		 }
+		  fprintf(WriteInHtml,"],");
+		 
 	 
-	  while(!feof(secondTxtFile))
+	 	//last page
+	 	
+	 	fourth = fopen("./HTMLTOPUT/fouth.txt","r");
+	 	
+	 	datareading = fgetc(fourth);
+	while(!feof(fourth))
     {
 
-       datareading = fgetc(secondTxtFile);
-
+      
         fputc(datareading,WriteInHtml);
+         datareading = fgetc(fourth);
+
 
     }
     
-    
-	 
+	 	fclose(fourth);
 	 	fclose(OpenHTMLFile);
-	 	fclose(secondTxtFile);
+
 	 	fclose(WriteInHtml);
 	 	
 	 	
@@ -289,3 +343,68 @@ char showGraphOption()
  	
  	
 	 }	
+	 
+	 
+ //now for the history pages
+	 
+//for showing history
+
+void showHistory()
+{
+	FILE *History;
+	
+	char choice,datareading;
+	system("cls");
+	
+	Menu("1 : See Raw Data",40,4,2);
+	Menu("2 : See In Webpage",40,6,3);
+	Menu("3 : Main Menu",40,8,4);
+	Menu("4 : Exit",40,10,5);
+	
+	readaDATA:
+	choice = getch();
+	
+	if(choice == '1')
+	{
+		History = fopen("./TXT/MyChart.text","r");
+		
+		if(History == NULL)
+		{
+			system("cls");
+			gotoxy(40,12);
+			printf("File Not Found 404..");
+			getch();
+			exit(0);
+		}else
+		{
+			//shoing data in console
+	while(!feof(History))
+    {
+
+       datareading = fgetc(History);
+
+        printf("%c",datareading);
+
+    }	
+    getch();
+    fclose(History);
+		}
+		
+	}else if(choice == '2')
+	{
+			//when html page is ready it will open this..
+			system("start OUTPUT/index.html");
+	}else if(choice == '3')
+	{
+		
+	showMenu();
+	}else if(choice == '4')
+	{
+		exitFn();
+	}else
+	{
+		goto readaDATA;
+	}
+}
+
+

@@ -1,5 +1,6 @@
 void exitFn(void);
 void takeInfo(void);
+void showHistory(void);
 //function for chnaging the co-ordinates
 void gotoxy(int xPos,int yPos)
 {
@@ -73,6 +74,7 @@ void showMenu()
 		
 	}else if(choice == '2')
 	{
+		showHistory();
 		
 	}else if (choice == '3')
 	{
